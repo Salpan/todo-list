@@ -1,4 +1,4 @@
-.wrapper {
+/* .wrapper {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -31,4 +31,29 @@
     width: 100%;
     justify-content: center;
     background-color: antiquewhite;
+} */
+
+/* Общий каркас */
+.wrapper {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 0 16px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.header,
+.footer {
+    text-align: center;
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.main {
+    background: #fff;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
 }

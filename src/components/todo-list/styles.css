@@ -1,18 +1,42 @@
-.container {
+.todo-list-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 12px;
 }
 
-.input {
+.toolbar {
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
-.isCompleted {
-    background-color: green;
+.filters {
+    display: flex;
+    gap: 8px;
 }
 
-.isNotComleted {
-    background-color: rgb(255, 102, 0);
+.filters button {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filters button.active {
+    border-color: #4f8cff;
+    color: #4f8cff;
+    font-weight: bold;
+}
+
+.counter {
+    font-size: 14px;
+    color: #666;
+}
+
+.todo-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }

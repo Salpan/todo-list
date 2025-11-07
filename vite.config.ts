@@ -5,9 +5,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
     resolve: {
         alias: {
-            _components: '/src/common/components',
-            _consts: '/src/common/consts',
-            _types: '/src/common/types',
+            _components: '/src/components',
+            _types: '/src/types',
         },
     },
     plugins: [react()],

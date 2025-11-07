@@ -1,0 +1,37 @@
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.todo-item.completed span {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.todo-item input[type='checkbox'] {
+    cursor: pointer;
+}
+
+.todo-item .actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+}
+
+.todo-item .actions button {
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.todo-item .actions button:hover {
+    background: #f0f0f0;
+}
