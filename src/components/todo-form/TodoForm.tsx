@@ -10,8 +10,10 @@ export const TodoForm: FC<Props> = ({ onAdd }) => {
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        onAdd(value);
-        setValue('');
+        if (value.trim()) {
+            onAdd(value);
+            setValue('');
+        }
     };
 
     return (

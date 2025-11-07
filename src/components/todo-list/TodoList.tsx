@@ -5,44 +5,29 @@ import { TodoItem } from '_components/todo-item/TodoItem';
 import './styles.css';
 
 export const TodoList: FC = () => {
-    // ✅ сразу читаем localStorage при инициализации
+    // сразу читаем localStorage при инициализации
     const [tasks, setTasks] = useState<Task[]>(() => {
         const saved = localStorage.getItem('tasks');
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                console.log('📥 Загружено при инициализации:', parsed);
-                return parsed;
-            } catch (err) {
-                console.error('❌ Ошибка парсинга:', err);
-                return [];
-            }
-        }
-        return [];
+        return saved ? JSON.parse(saved) : [];
     });
 
     const [filter, setFilter] = useState<Filter>(Filter.All);
 
-    // сохраняем при каждом изменении
+    // сохраняем при изменении
     useEffect(() => {
-        console.log('💾 Сохраняем задачи:', tasks);
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }, [tasks]);
 
     const addTask = (title: string) => {
-        if (title.trim() !== '') {
-            const newTask = {
-                id: Date.now(),
-                title: title.trim(),
-                isCompleted: false,
-            };
-            console.log('➕ Добавляем задачу:', newTask);
-            setTasks([...tasks, newTask]);
+        if (title.trim()) {
+            setTasks([
+                ...tasks,
+                { id: Date.now(), title: title.trim(), isCompleted: false },
+            ]);
         }
     };
 
     const toggleTask = (id: number) => {
-        console.log('🔄 Переключаем задачу:', id);
         setTasks(
             tasks.map((t) =>
                 t.id === id ? { ...t, isCompleted: !t.isCompleted } : t,
@@ -51,22 +36,22 @@ export const TodoList: FC = () => {
     };
 
     const deleteTask = (id: number) => {
-        console.log('🗑 Удаляем задачу:', id);
         setTasks(tasks.filter((t) => t.id !== id));
     };
 
     const editTask = (id: number, title: string) => {
-        console.log('✏️ Редактируем задачу:', id, 'новый текст:', title);
         setTasks(
             tasks.map((t) => (t.id === id ? { ...t, title: title.trim() } : t)),
         );
     };
 
-    const filteredTasks = tasks.filter((t) => {
-        if (filter === Filter.Active) return !t.isCompleted;
-        if (filter === Filter.Completed) return t.isCompleted;
-        return true;
-    });
+    const filteredTasks = tasks.filter((t) =>
+        filter === Filter.Active
+            ? !t.isCompleted
+            : filter === Filter.Completed
+              ? t.isCompleted
+              : true,
+    );
 
     const activeCount = tasks.filter((t) => !t.isCompleted).length;
 

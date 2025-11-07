@@ -14,8 +14,10 @@ export const TodoItem: FC<Props> = ({ task, onToggle, onDelete, onEdit }) => {
     const [draft, setDraft] = useState(task.title);
 
     const save = () => {
-        onEdit(task.id, draft);
-        setIsEditing(false);
+        if (draft.trim()) {
+            onEdit(task.id, draft);
+            setIsEditing(false);
+        }
     };
 
     return (
@@ -25,26 +27,30 @@ export const TodoItem: FC<Props> = ({ task, onToggle, onDelete, onEdit }) => {
                 checked={task.isCompleted}
                 onChange={() => onToggle(task.id)}
             />
+
             {isEditing ? (
-                <input
-                    value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
-                    onBlur={save}
-                    autoFocus
-                />
+                <>
+                    <input
+                        value={draft}
+                        onChange={(e) => setDraft(e.target.value)}
+                        autoFocus
+                    />
+                    <button type="button" onClick={save}>
+                        Сохранить
+                    </button>
+                </>
             ) : (
-                <span>{task.title}</span>
-            )}
-            <div className="actions">
-                {isEditing ? (
-                    <button onClick={save}>Сохранить</button>
-                ) : (
-                    <button onClick={() => setIsEditing(true)}>
+                <>
+                    <span>{task.title}</span>
+                    <button type="button" onClick={() => setIsEditing(true)}>
                         Редактировать
                     </button>
-                )}
-                <button onClick={() => onDelete(task.id)}>Удалить</button>
-            </div>
+                </>
+            )}
+
+            <button type="button" onClick={() => onDelete(task.id)}>
+                Удалить
+            </button>
         </li>
     );
 };
