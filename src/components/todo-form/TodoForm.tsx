@@ -1,35 +1,27 @@
 import { FC, useState } from 'react';
-import { Task } from '_types/todoList';
 import './styles.css';
 
-export const TodoForm: FC = () => {
+type Props = {
+    onAdd: (title: string) => void;
+};
+
+export const TodoForm: FC<Props> = ({ onAdd }) => {
     const [value, setValue] = useState('');
 
-    const addTask = () => {
-        if (value.trim() !== '') {
-            const tasks = JSON.parse(
-                localStorage.getItem('tasks') || '[]',
-            ) as Task[];
-            const newTasks = [
-                ...tasks,
-                { id: Date.now(), title: value.trim(), isCompleted: false },
-            ];
-            localStorage.setItem('tasks', JSON.stringify(newTasks));
-            setValue('');
-            window.location.reload();
-        }
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+        onAdd(value);
+        setValue('');
     };
 
     return (
-        <div className="todo-form">
+        <form className="todo-form" onSubmit={submit}>
             <input
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder="Новая задача..."
             />
-            <button type="button" onClick={addTask}>
-                Добавить
-            </button>
-        </div>
+            <button type="submit">Добавить</button>
+        </form>
     );
 };

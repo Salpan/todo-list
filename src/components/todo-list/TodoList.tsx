@@ -1,24 +1,48 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
+import { Task, Filter } from '_types/todoList';
+import { TodoForm } from '_components/todo-form/TodoForm';
 import { TodoItem } from '_components/todo-item/TodoItem';
-import { Filter, Task } from '_types/todoList';
 import './styles.css';
 
 export const TodoList: FC = () => {
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [filter, setFilter] = useState<Filter>(Filter.All);
-
-    useEffect(() => {
+    // ✅ сразу читаем localStorage при инициализации
+    const [tasks, setTasks] = useState<Task[]>(() => {
         const saved = localStorage.getItem('tasks');
         if (saved) {
-            setTasks(JSON.parse(saved));
+            try {
+                const parsed = JSON.parse(saved);
+                console.log('📥 Загружено при инициализации:', parsed);
+                return parsed;
+            } catch (err) {
+                console.error('❌ Ошибка парсинга:', err);
+                return [];
+            }
         }
-    }, []);
+        return [];
+    });
 
+    const [filter, setFilter] = useState<Filter>(Filter.All);
+
+    // сохраняем при каждом изменении
     useEffect(() => {
+        console.log('💾 Сохраняем задачи:', tasks);
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }, [tasks]);
 
+    const addTask = (title: string) => {
+        if (title.trim() !== '') {
+            const newTask = {
+                id: Date.now(),
+                title: title.trim(),
+                isCompleted: false,
+            };
+            console.log('➕ Добавляем задачу:', newTask);
+            setTasks([...tasks, newTask]);
+        }
+    };
+
     const toggleTask = (id: number) => {
+        console.log('🔄 Переключаем задачу:', id);
         setTasks(
             tasks.map((t) =>
                 t.id === id ? { ...t, isCompleted: !t.isCompleted } : t,
@@ -27,17 +51,15 @@ export const TodoList: FC = () => {
     };
 
     const deleteTask = (id: number) => {
+        console.log('🗑 Удаляем задачу:', id);
         setTasks(tasks.filter((t) => t.id !== id));
     };
 
     const editTask = (id: number, title: string) => {
-        if (title.trim() !== '') {
-            setTasks(
-                tasks.map((t) =>
-                    t.id === id ? { ...t, title: title.trim() } : t,
-                ),
-            );
-        }
+        console.log('✏️ Редактируем задачу:', id, 'новый текст:', title);
+        setTasks(
+            tasks.map((t) => (t.id === id ? { ...t, title: title.trim() } : t)),
+        );
     };
 
     const filteredTasks = tasks.filter((t) => {
@@ -50,6 +72,8 @@ export const TodoList: FC = () => {
 
     return (
         <div className="todo-list-wrapper">
+            <TodoForm onAdd={addTask} />
+
             <div className="toolbar">
                 <div className="filters">
                     <button
@@ -73,6 +97,7 @@ export const TodoList: FC = () => {
                 </div>
                 <div className="counter">Осталось {activeCount} задач</div>
             </div>
+
             <ul className="todo-list">
                 {filteredTasks.map((task) => (
                     <TodoItem
