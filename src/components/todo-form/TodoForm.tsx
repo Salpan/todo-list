@@ -1,11 +1,8 @@
 import { FC, useState } from 'react';
+import { TodoFormProps } from '_types/types';
 import './styles.css';
 
-type Props = {
-    onAdd: (title: string) => void;
-};
-
-export const TodoForm: FC<Props> = ({ onAdd }) => {
+export const TodoForm: FC<TodoFormProps> = ({ onAdd }) => {
     const [value, setValue] = useState('');
 
     const submit = (e: React.FormEvent) => {

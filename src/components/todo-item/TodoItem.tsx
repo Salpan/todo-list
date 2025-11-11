@@ -1,56 +1,69 @@
-import { FC, useState } from 'react';
-import { Task } from '_types/todoList';
+import { FC, useState, useCallback } from 'react';
+import { TodoItemProps } from '_types/types';
 import './styles.css';
 
-type Props = {
-    task: Task;
-    onToggle: (id: number) => void;
-    onDelete: (id: number) => void;
-    onEdit: (id: number, title: string) => void;
-};
-
-export const TodoItem: FC<Props> = ({ task, onToggle, onDelete, onEdit }) => {
+export const TodoItem: FC<TodoItemProps> = ({
+    task,
+    onToggle,
+    onDelete,
+    onEdit,
+}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [draft, setDraft] = useState(task.title);
 
-    const save = () => {
+    const handleToggle = useCallback(
+        () => onToggle(task.id),
+        [onToggle, task.id],
+    );
+    const handleDelete = useCallback(
+        () => onDelete(task.id),
+        [onDelete, task.id],
+    );
+    const handleEdit = useCallback(() => setIsEditing(true), []);
+    const handleSave = useCallback(() => {
         if (draft.trim()) {
             onEdit(task.id, draft);
             setIsEditing(false);
         }
-    };
+    }, [onEdit, task.id, draft]);
+    const handleChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            setDraft(e.target.value);
+        },
+        [],
+    );
 
     return (
         <li className={`todo-item ${task.isCompleted ? 'completed' : ''}`}>
             <input
                 type="checkbox"
                 checked={task.isCompleted}
-                onChange={() => onToggle(task.id)}
+                onChange={handleToggle}
             />
-
             {isEditing ? (
-                <>
-                    <input
-                        value={draft}
-                        onChange={(e) => setDraft(e.target.value)}
-                        autoFocus
-                    />
-                    <button type="button" onClick={save}>
+                <input
+                    type="text"
+                    value={draft}
+                    onChange={handleChange}
+                    autoFocus
+                />
+            ) : (
+                <span>{task.title}</span>
+            )}
+            <div className="actions">
+                {isEditing ? (
+                    <button type="button" onClick={handleSave}>
                         Сохранить
                     </button>
-                </>
-            ) : (
-                <>
-                    <span>{task.title}</span>
-                    <button type="button" onClick={() => setIsEditing(true)}>
+                ) : (
+                    <button type="button" onClick={handleEdit}>
                         Редактировать
                     </button>
-                </>
-            )}
-
-            <button type="button" onClick={() => onDelete(task.id)}>
-                Удалить
-            </button>
+                )}
+                <button type="button" onClick={handleDelete}>
+                    Удалить
+                </button>
+            </div>
         </li>
     );
 };
