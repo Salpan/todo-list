@@ -1,11 +1,11 @@
-import { FC, useState, useEffect } from 'react';
-import { Task, Filter } from '_types/todoList';
+import { FC, useState, useEffect, useCallback, useMemo } from 'react';
+import { Task } from '_types/types';
 import { TodoForm } from '_components/todo-form/TodoForm';
 import { TodoItem } from '_components/todo-item/TodoItem';
+import { Filter } from '../../common/enums/filter';
 import './styles.css';
 
 export const TodoList: FC = () => {
-    // сразу читаем localStorage при инициализации
     const [tasks, setTasks] = useState<Task[]>(() => {
         const saved = localStorage.getItem('tasks');
         return saved ? JSON.parse(saved) : [];
@@ -13,52 +13,59 @@ export const TodoList: FC = () => {
 
     const [filter, setFilter] = useState<Filter>(Filter.All);
 
-    // сохраняем при изменении
+    const addTask = useCallback((title: string) => {
+        if (title.trim()) {
+            setTasks((prevTasks) => [
+                ...prevTasks,
+                { id: Date.now(), title: title.trim(), isCompleted: false },
+            ]);
+        }
+    }, []);
+
+    const toggleTask = useCallback((id: number) => {
+        setTasks((prevTasks) =>
+            prevTasks.map((task) =>
+                task.id === id
+                    ? { ...task, isCompleted: !task.isCompleted }
+                    : task,
+            ),
+        );
+    }, []);
+
+    const deleteTask = useCallback((id: number) => {
+        setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+    }, []);
+
+    const editTask = useCallback((id: number, title: string) => {
+        setTasks((prevTasks) =>
+            prevTasks.map((task) =>
+                task.id === id ? { ...task, title: title.trim() } : task,
+            ),
+        );
+    }, []);
+
+    const filteredTasks = useMemo(() => {
+        return tasks.filter((task) =>
+            filter === Filter.Active
+                ? !task.isCompleted
+                : filter === Filter.Completed
+                  ? task.isCompleted
+                  : true,
+        );
+    }, [tasks, filter]);
+
+    const activeCount = useMemo(
+        () => tasks.filter((task) => !task.isCompleted).length,
+        [tasks],
+    );
+
     useEffect(() => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }, [tasks]);
 
-    const addTask = (title: string) => {
-        if (title.trim()) {
-            setTasks([
-                ...tasks,
-                { id: Date.now(), title: title.trim(), isCompleted: false },
-            ]);
-        }
-    };
-
-    const toggleTask = (id: number) => {
-        setTasks(
-            tasks.map((t) =>
-                t.id === id ? { ...t, isCompleted: !t.isCompleted } : t,
-            ),
-        );
-    };
-
-    const deleteTask = (id: number) => {
-        setTasks(tasks.filter((t) => t.id !== id));
-    };
-
-    const editTask = (id: number, title: string) => {
-        setTasks(
-            tasks.map((t) => (t.id === id ? { ...t, title: title.trim() } : t)),
-        );
-    };
-
-    const filteredTasks = tasks.filter((t) =>
-        filter === Filter.Active
-            ? !t.isCompleted
-            : filter === Filter.Completed
-              ? t.isCompleted
-              : true,
-    );
-
-    const activeCount = tasks.filter((t) => !t.isCompleted).length;
-
     return (
         <div className="todo-list-wrapper">
             <TodoForm onAdd={addTask} />
-
             <div className="toolbar">
                 <div className="filters">
                     <button
@@ -82,7 +89,6 @@ export const TodoList: FC = () => {
                 </div>
                 <div className="counter">Осталось {activeCount} задач</div>
             </div>
-
             <ul className="todo-list">
                 {filteredTasks.map((task) => (
                     <TodoItem

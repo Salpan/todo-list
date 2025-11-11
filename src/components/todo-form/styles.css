@@ -7,19 +7,19 @@
 .todo-form input {
     flex: 1;
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 4px;
 }
 
 .todo-form button {
     padding: 8px 12px;
+    background: #4a90e2;
+    color: white;
     border: none;
-    background: #4f8cff;
-    color: #fff;
     border-radius: 4px;
     cursor: pointer;
 }
 
 .todo-form button:hover {
-    background: #3a6fd1;
+    background: #357ab8;
 }

@@ -25,7 +25,7 @@
         /* Aliese */
         "paths": {
             "_components/*": ["./src/components/*"],
-            "_types/*": ["./src/types/*"]
+            "_types/*": ["./src/common/types/*"]
         }
     },
     "include": ["src"]

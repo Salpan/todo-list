@@ -8,7 +8,7 @@ function App() {
             <main className="main">
                 <TodoList />
             </main>
-            <footer className="footer">Salpanov Inc.</footer>
+            <footer className="footer">Salpan Inc.</footer>
         </div>
     );
 }
